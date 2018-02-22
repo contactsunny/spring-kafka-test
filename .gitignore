@@ -1,0 +1,7 @@
+/target/
+/bin/
+.project
+.classpath
+/.settings/
+.idea/
+springkafkatest.iml
