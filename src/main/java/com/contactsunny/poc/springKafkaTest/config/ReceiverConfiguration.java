@@ -26,7 +26,17 @@ public class ReceiverConfiguration {
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(10);
         factory.getContainerProperties().setPollTimeout(3000);
+
+        /*
+        AckMode.MANUAL_IMMEDIATE will commit the offsets to kafka immediately, without waiting for any
+        other kind of events to occur.
+        
+        But AckMode.MANUAL will work similar to AckMode.BATCH, which means after the acknowledge() method
+        is called on a message, the system will wait till all the messages received by the poll() method have
+        been acknowledged. This could take a long time, depending on your setup.
+         */
         factory.getContainerProperties().setAckMode(AbstractMessageListenerContainer.AckMode.MANUAL_IMMEDIATE);
+
         factory.getContainerProperties().setSyncCommits(true);
         return factory;
     }
@@ -42,7 +52,12 @@ public class ReceiverConfiguration {
         propsMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         propsMap.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         propsMap.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+
+        /*
+        Disabling the auto-commit feature to test the manual commit method.
+         */
         propsMap.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+
         propsMap.put(ConsumerConfig.GROUP_ID_CONFIG, "Test-Consumer-Group");
         return propsMap;
     }
